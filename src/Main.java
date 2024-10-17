@@ -104,6 +104,14 @@ public class Main extends Canvas implements Runnable, MouseListener, KeyListener
 
 	/*###########################################################*/
 
+	private void erasePoints() {
+		if(points.size() == 0) {
+			return;
+		}
+		
+		points.clear();
+	}
+
 	private void render() {
 		BufferStrategy bs = this.getBufferStrategy();
 		if(bs == null) {
@@ -132,11 +140,14 @@ public class Main extends Canvas implements Runnable, MouseListener, KeyListener
 		g.setColor(Color.black);
 		g.setFont(new Font("Arial", 1, 20));
 		if(line instanceof Bezier3) {
-			g.drawString("Exibition modes 0 - 3", 5, 25);
+			g.drawString("Exibition modes: 0 - 3", 5, 25);
 		} else if(line instanceof Bezier4) {
-			g.drawString("Exibition modes 0 - 4", 5, 25);
+			g.drawString("Exibition modes: 0 - 4", 5, 25);
+		} else {
+			g.drawString("Click on the screen to create a point.", 5, 25);
 		}
 		g.drawString("Press 'UP' and 'DOWN' to control the velocity.", 5, HEIGHT-5);
+		g.drawString("Press 'e' to erase points.", WIDTH-250, HEIGHT-5);
 
 		g.dispose();
 		g = bs.getDrawGraphics();
@@ -197,6 +208,10 @@ public class Main extends Canvas implements Runnable, MouseListener, KeyListener
 
 		if(e.getKeyCode() == KeyEvent.VK_4) {
 			exibMode = 4;
+		}
+
+		if(e.getKeyCode() == KeyEvent.VK_E) {
+			erasePoints();
 		}
 
 		if(e.getKeyCode() == KeyEvent.VK_ESCAPE) {
