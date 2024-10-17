@@ -23,10 +23,10 @@ public class Main extends Canvas implements Runnable, MouseListener, KeyListener
 	private BufferedImage canva;
 
 	private List<Point> points;
-	private List<Bezier4> lines;
+	private Bezier line;
 	private int pointCount = 0;
 
-	public static boolean complex = false;
+	public static int exibMode = 0;
 	private int frameRate = 15;
 
 	public Main() {
@@ -37,7 +37,6 @@ public class Main extends Canvas implements Runnable, MouseListener, KeyListener
 		canva = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
 
 		points = new LinkedList<>();
-		lines = new LinkedList<>();
 
 		initFrame();
 	}
@@ -126,13 +125,17 @@ public class Main extends Canvas implements Runnable, MouseListener, KeyListener
 			g.drawLine(cPoint.getX(), cPoint.getY(), nPoint.getX(), nPoint.getY());
 		}
 
-		for(int i = 0; i < lines.size(); i++) {
-			lines.get(i).render(g);
+		if(line != null) {
+			line.render(g);
 		}
 
 		g.setColor(Color.black);
 		g.setFont(new Font("Arial", 1, 20));
-		g.drawString("Press 'E' to toggle internal lines", 5, 25);
+		if(line instanceof Bezier3) {
+			g.drawString("Exibition modes 0 - 3", 5, 25);
+		} else if(line instanceof Bezier4) {
+			g.drawString("Exibition modes 0 - 4", 5, 25);
+		}
 		g.drawString("Press 'UP' and 'DOWN' to control the velocity.", 5, HEIGHT-5);
 
 		g.dispose();
@@ -142,8 +145,8 @@ public class Main extends Canvas implements Runnable, MouseListener, KeyListener
 	}
 
 	private void tick() {
-		for(int i = 0; i < lines.size(); i++) {
-			lines.get(i).tick();
+		if(line != null) {
+			line.tick();
 		}
 	}
 
@@ -158,21 +161,42 @@ public class Main extends Canvas implements Runnable, MouseListener, KeyListener
 			pointCount++;
 		}
 
+		if(pointCount == 3) {
+			line = new Bezier3(points.get(points.size()-3), points.get(points.size()-2), points.get(points.size()-1));
+		}
+
 		if(pointCount == 4) {
-			lines.add(new Bezier4(points.get(points.size()-4), points.get(points.size()-3), points.get(points.size()-2), points.get(points.size()-1)));
+			exibMode = 0;
+			line = new Bezier4(points.get(points.size()-4), points.get(points.size()-3), points.get(points.size()-2), points.get(points.size()-1));
 			pointCount++;
 		} else if(pointCount == 5) {
 			points.remove(0);
-			lines.remove(0);
 			points.add(new Point(e.getX(), e.getY()));
-			lines.add(new Bezier4(points.get(points.size()-4), points.get(points.size()-3), points.get(points.size()-2), points.get(points.size()-1)));
+			line = new Bezier4(points.get(points.size()-4), points.get(points.size()-3), points.get(points.size()-2), points.get(points.size()-1));
 		}
 	}
 
 	@Override
 	public void keyPressed(KeyEvent e) {
-		if(e.getKeyCode() == KeyEvent.VK_E) {
-			complex = !complex;
+
+		if(e.getKeyCode() == KeyEvent.VK_0) {
+			exibMode = 0;
+		}
+		
+		if(e.getKeyCode() == KeyEvent.VK_1) {
+			exibMode = 1;
+		}
+
+		if(e.getKeyCode() == KeyEvent.VK_2) {
+			exibMode = 2;
+		}
+
+		if(e.getKeyCode() == KeyEvent.VK_3) {
+			exibMode = 3;
+		}
+
+		if(e.getKeyCode() == KeyEvent.VK_4) {
+			exibMode = 4;
 		}
 
 		if(e.getKeyCode() == KeyEvent.VK_ESCAPE) {

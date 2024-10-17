@@ -1,7 +1,7 @@
 import java.awt.Color;
 import java.awt.Graphics;
 
-public class Bezier4 {
+public class Bezier4 implements Bezier {
 
     private Point p1, p2, p3, p4;
     
@@ -64,21 +64,34 @@ public class Bezier4 {
         }
     }
 
+    @Override
     public void render(Graphics g) {
-        g.setColor(Color.red);
-        g.drawPolyline(xList, yList, nPoints);
-
-        tPoint.render(g);
-
-        if(Main.complex == true) {
-            for(int i = 0; i < tPoints.length; i++) {
+        
+        if(Main.exibMode >= 1) {
+            for(int i = 0; i < 3; i++) {
                 tPoints[i].render(g);
             }
-    
+        }
+
+        if(Main.exibMode >= 2) {
             g.drawLine(tPoints[0].getX(), tPoints[0].getY(), tPoints[1].getX(), tPoints[1].getY());
             g.drawLine(tPoints[1].getX(), tPoints[1].getY(), tPoints[2].getX(), tPoints[2].getY());
-            g.drawLine(tPoints[3].getX(), tPoints[3].getY(), tPoints[4].getX(), tPoints[4].getY());
+
+            for(int i = 2; i < tPoints.length; i++) {
+                tPoints[i].render(g);
+            }
         }
+
+        if(Main.exibMode >= 3) {
+            g.drawLine(tPoints[3].getX(), tPoints[3].getY(), tPoints[4].getX(), tPoints[4].getY());
+            tPoint.render(g);
+        }
+        
+        if(Main.exibMode >= 4) {
+            g.setColor(Color.red);
+            g.drawPolyline(xList, yList, nPoints);
+        }
+        
         
     }
 
@@ -91,5 +104,4 @@ public class Bezier4 {
 		}
         t = 0.0;
     }
-
 }

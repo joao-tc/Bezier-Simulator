@@ -1,5 +1,7 @@
-Click on the frame to create Points. With 4 Points you will create an Bezier Curve.
+Click on the frame to create Points. 
 
-Press 'E' to show the intern curves.
+This program has support to 3 and 4 points Bezier Curves.
+
+Use 0 - 4 to toggle intern lines.
 
 Use the arrow keys to control the speed.

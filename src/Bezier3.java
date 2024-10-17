@@ -1,11 +1,13 @@
 import java.awt.Color;
 import java.awt.Graphics;
 
-public class Bezier3 {
+public class Bezier3 implements Bezier {
 
     private Point p1, p2, p3;
     
     private int nPoints = 50;
+    private double pace = 1.0/nPoints;
+    private int dir = -1;
 
     private int[] xList;
     private int[] yList;
@@ -13,6 +15,7 @@ public class Bezier3 {
     private double t = 0.0;
     private int currIdx = 0;
 
+    private Point[] tPoints;
     private Point tPoint;
 
     public Bezier3(Point p1, Point p2, Point p3) {
@@ -25,22 +28,51 @@ public class Bezier3 {
 
         generatePoints(xList, yList);
 
-        this.tPoint = new Point(xList[0], yList[0]);
+        tPoint = new Point();
+
+        tPoints = new Point[2];
+        for(int i = 0; i < tPoints.length; i++) {
+            tPoints[i] = new Point();
+        }
+
     }
 
     public void tick() {
         tPoint.setX(xList[currIdx]);
         tPoint.setY(yList[currIdx]);
-        currIdx++;
-        if(currIdx >= nPoints-1) {
-            currIdx = 0;
+        currIdx-=dir;
+
+        tPoints[0].setX((int)((1 - t) * p1.getX() + t * p2.getX()));
+        tPoints[0].setY((int)((1 - t) * p1.getY() + t * p2.getY()));
+        tPoints[1].setX((int)((1 - t) * p2.getX() + t * p3.getX()));
+        tPoints[1].setY((int)((1 - t) * p2.getY() + t * p3.getY()));
+
+        t+=pace;
+
+        if(currIdx >= nPoints-1 || currIdx <= 0) {
+            dir *= -1;
+            pace *= -1;
         }
     }
 
     public void render(Graphics g) {
-        g.setColor(Color.red);
-        g.drawPolyline(xList, yList, nPoints);
-        tPoint.render(g);
+
+        if(Main.exibMode >= 1) {
+            for(int i = 0; i < tPoints.length; i++) {
+                tPoints[i].render(g);
+            }
+        }
+
+        if(Main.exibMode >= 2) {
+            g.drawLine(tPoints[0].getX(), tPoints[0].getY(), tPoints[1].getX(), tPoints[1].getY());
+            tPoint.render(g);
+        }
+        
+        if(Main.exibMode >= 3) {
+            g.setColor(Color.red);
+            g.drawPolyline(xList, yList, nPoints);
+        }
+        
     }
 
     private void generatePoints(int[] xList, int[] yList) {
