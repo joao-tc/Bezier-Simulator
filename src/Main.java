@@ -109,6 +109,7 @@ public class Main extends Canvas implements Runnable, MouseListener, KeyListener
 			return;
 		}
 		
+		line = null;
 		points.clear();
 	}
 
